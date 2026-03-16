@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>Proxy Setup</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+    <div class="container">
+        <div class="form">
+            <div class="field">
+                <label>IP сервера</label>
+                <input id="ip" type="text" placeholder="IP адрес" />
+                <span class="err" id="ip-err"></span>
+            </div>
+            <div class="field">
+                <label>Логин</label>
+                <input id="login" type="text" placeholder="Логин" />
+                <span class="err" id="login-err"></span>
+            </div>
+            <div class="field">
+                <label>Пароль</label>
+                <input id="pass" type="password" placeholder="Пароль" />
+                <span class="err" id="pass-err"></span>
+            </div>
+            <div class="field">
+                <label>Порт прокси</label>
+                <input id="port" type="text" placeholder="1080" value="1080" />
+                <span class="err" id="port-err"></span>
+            </div>
+            <div class="field">
+                <label>SSH порт</label>
+                <input id="ssh-port" type="text" placeholder="22" value="22" />
+                <span class="err" id="ssh-port-err"></span>
+            </div>
+        </div>
+
+    <div class="divider"></div>
+
+    <div class="status-row">
+      <span class="dot" id="dot"></span>
+      <span id="status-text"></span>
+    </div>
+
+    <div class="log-box">
+      <pre id="log"></pre>
+    </div>
+
+    <progress id="progress" value="0" max="1"></progress>
+
+    <div class="buttons">
+      <button id="btn-setup" class="btn primary">Настроить</button>
+      <button id="btn-reset" class="btn secondary">Сбросить</button>
+    </div>
+  </div>
+
+  <script src="renderer.js"></script>
+</body>
+</html>
