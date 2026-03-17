@@ -29,7 +29,7 @@ https://github.com/nnaxim/tg-auto-proxy/releases
 
 ## Скриншоты
 
-![App](assets/github-screens/screen1.png)
+![App](assets/github-screens/screen.png)
 
 ![App2](assets/github-screens/screen2.png)
 
