@@ -257,3 +257,120 @@ progress::-webkit-progress-value {
   background: linear-gradient(#2b5cff, #6a5cff);
   border-radius: 10px;
 }
+
+.server-card {
+  padding: 20px;
+  border-radius: 16px;
+  background: linear-gradient(145deg, rgba(25,30,60,0.8), rgba(15,18,35,0.95));
+  border: 1px solid rgba(60,70,140,0.25);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+  transition: 0.2s;
+}
+
+.server-card:hover {
+  border-color: rgba(60,70,140,0.5);
+  transform: translateY(-2px);
+}
+
+.server-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.ip {
+  font-weight: 600;
+  font-size: 15px;
+  color: #e6e9ff;
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #3cff8f;
+  box-shadow: 0 0 8px #3cff8f66;
+}
+
+.block {
+  margin-top: 12px;
+  background: rgba(10,13,35,0.6);
+  border: 1px solid #1c2450;
+  border-radius: 10px;
+  padding: 10px 12px;
+}
+
+.block-head {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-bottom: 5px;
+}
+
+.label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  color: #5a6499;
+}
+
+.value {
+  font-size: 13px;
+  color: #c0caff;
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+}
+
+.value.small {
+  font-size: 11px;
+  word-break: break-all;
+  opacity: 0.75;
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.actions button {
+  flex: 1;
+  padding: 8px 6px;
+  border-radius: 8px;
+  border: none;
+  background: rgba(43,92,255,0.15);
+  border: 1px solid rgba(43,92,255,0.3);
+  color: #7a9fff;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  transition: 0.15s;
+}
+
+.actions button:hover {
+  background: rgba(43,92,255,0.3);
+  color: #fff;
+}
+
+.actions .danger {
+  background: rgba(255,77,77,0.1);
+  border-color: rgba(255,77,77,0.3);
+  color: #ff7a7a;
+}
+
+.actions .danger:hover {
+  background: rgba(255,77,77,0.25);
+  color: #fff;
+}
+
+.empty {
+  opacity: 0.5;
+  text-align: center;
+  margin-top: 40px;
+  font-size: 14px;
+}

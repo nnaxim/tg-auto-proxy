@@ -1,123 +1,182 @@
+const ipInput    = document.getElementById('ip')
+const loginInput = document.getElementById('login')
+const passInput  = document.getElementById('pass')
+
+const logEl      = document.getElementById('log')
+const statusText = document.getElementById('status-text')
+const dot        = document.getElementById('dot')
+const btnSetup   = document.getElementById('btn-setup')
+const serversList = document.getElementById('servers-list')
+
+
 document.querySelectorAll('.nav').forEach(btn => {
-  btn.addEventListener('click', () => {
+  btn.onclick = () => {
     document.querySelectorAll('.nav').forEach(b => b.classList.remove('active'))
     btn.classList.add('active')
 
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'))
     document.getElementById(btn.dataset.page).classList.add('active')
-  })
+
+    if (btn.dataset.page === 'servers') renderServers()
+  }
 })
-
-const ipInput      = document.getElementById('ip')
-const loginInput   = document.getElementById('login')
-const passInput    = document.getElementById('pass')
-const portInput    = document.getElementById('port')
-const sshPortInput = document.getElementById('ssh-port')
-const ipErr        = document.getElementById('ip-err')
-const loginErr     = document.getElementById('login-err')
-const passErr      = document.getElementById('pass-err')
-const portErr      = document.getElementById('port-err')
-const sshPortErr   = document.getElementById('ssh-port-err')
-const logEl        = document.getElementById('log')
-const progressEl   = document.getElementById('progress')
-const statusText   = document.getElementById('status-text')
-const dot          = document.getElementById('dot')
-const btnSetup     = document.getElementById('btn-setup')
-const btnReset     = document.getElementById('btn-reset')
-
-function isValidIP(ip) {
-  const parts = ip.split('.')
-  if (parts.length !== 4) return false
-  return parts.every(p => {
-    const n = Number(p)
-    return p !== '' && !isNaN(n) && n >= 0 && n <= 255
-  })
-}
-
-function isValidPort(p) {
-  const n = Number(p)
-  return Number.isInteger(n) && n > 0 && n <= 65535
-}
-
-function clearErrors() {
-  ipErr.textContent      = ''
-  loginErr.textContent   = ''
-  passErr.textContent    = ''
-  portErr.textContent    = ''
-  sshPortErr.textContent = ''
-}
 
 function setStatus(text, state) {
   statusText.textContent = text
   dot.className = 'dot ' + (state || '')
 }
 
-function appendLog(msg) {
+function log(msg) {
   logEl.textContent += msg + '\n'
-  logEl.parentElement.scrollTop = logEl.parentElement.scrollHeight
+  logEl.scrollTop = logEl.scrollHeight
 }
 
-window.api.onLog(appendLog)
+function getServers() {
+  return JSON.parse(localStorage.getItem('servers') || '[]')
+}
 
-window.api.onProgress(val => {
-  progressEl.value = val
-})
+function saveServer(server) {
+  const list = getServers()
+  list.push(server)
+  localStorage.setItem('servers', JSON.stringify(list))
+}
 
-window.api.onStatus(({ text, ok }) => {
+function deleteServer(index) {
+  const list = getServers()
+  list.splice(index, 1)
+  localStorage.setItem('servers', JSON.stringify(list))
+}
+
+function showCopied(btn) {
+  const original = btn.innerHTML
+  btn.innerHTML = 'Скопировано'
+  btn.disabled = true
+
+  setTimeout(() => {
+    btn.innerHTML = original
+    btn.disabled = false
+  }, 1200)
+}
+
+function confirmDelete() {
+  return confirm('Удалить сервер?')
+}
+
+async function checkOnline(ip) {
+  try {
+    const res = await fetch(`http://${ip}:1080`, { method: 'HEAD', mode: 'no-cors' })
+    return true
+  } catch {
+    return false
+  }
+}
+
+function renderServers() {
+  const servers = getServers()
+  serversList.innerHTML = ''
+
+  if (!servers.length) {
+    serversList.innerHTML = '<div class="empty">Нет серверов</div>'
+    return
+  }
+
+  servers.forEach((s, i) => {
+    const el = document.createElement('div')
+    el.className = 'server-card'
+
+    el.innerHTML = `
+      <div class="server-top">
+        <div class="ip">${s.ip}</div>
+        <div class="status loading">Проверка...</div>
+      </div>
+
+      <div class="block">
+        <div class="label">SOCKS5</div>
+        <div class="value">${s.user}:${s.pass}</div>
+      </div>
+
+      <div class="block">
+        <div class="label">MTProto</div>
+        <div class="value small">${s.mtproto}</div>
+      </div>
+
+      <div class="actions">
+        <button class="copy-socks">SOCKS</button>
+        <button class="copy-mtproto">MTProto</button>
+        <button class="delete danger">Удалить</button>
+      </div>
+    `
+
+    serversList.appendChild(el)
+
+    const btnSocks = el.querySelector('.copy-socks')
+    const btnMt    = el.querySelector('.copy-mtproto')
+    const btnDel   = el.querySelector('.delete')
+    const statusEl = el.querySelector('.status')
+
+    btnSocks.onclick = () => {
+      navigator.clipboard.writeText(`socks5://${s.user}:${s.pass}@${s.ip}:1080`)
+      showCopied(btnSocks)
+    }
+
+    btnMt.onclick = () => {
+      navigator.clipboard.writeText(s.mtproto)
+      showCopied(btnMt)
+    }
+
+    btnDel.onclick = () => {
+      if (!confirmDelete()) return
+      deleteServer(i)
+      renderServers()
+    }
+
+    checkOnline(s.ip).then(online => {
+      statusEl.textContent = online ? 'Онлайн' : 'Оффлайн'
+      statusEl.className = 'status ' + (online ? 'online' : 'offline')
+    })
+  })
+}
+
+window.api.onLog(log)
+
+window.api.onStatus(async ({ text, ok }) => {
   if (ok === true) {
     setStatus(text, 'ok')
     btnSetup.disabled = false
-    btnSetup.classList.remove('loading')
+
+    const res = await window.api.getResult()
+
+    if (!res || !res.pass) {
+      log('нет данных от сервера')
+      return
+    }
+
+    saveServer({
+      ip: ipInput.value.trim(),
+      user: res.user || 'proxyuser',
+      pass: res.pass || 'unknown',
+      mtproto: res.link || '',
+    })
+
   } else if (ok === false) {
     setStatus(text, 'error')
     btnSetup.disabled = false
-    btnSetup.classList.remove('loading')
   } else {
     setStatus(text, 'pending')
   }
 })
 
-btnSetup.addEventListener('click', () => {
-  clearErrors()
+btnSetup.onclick = () => {
   logEl.textContent = ''
-  progressEl.value  = 0
-  setStatus('', '')
 
-  const ip      = ipInput.value.trim()
-  const login   = loginInput.value.trim()
-  const pass    = passInput.value
-  const port    = portInput.value.trim() || '1080'
-  const sshPort = sshPortInput.value.trim() || '22'
+  const ip    = ipInput.value.trim()
+  const login = loginInput.value.trim()
+  const pass  = passInput.value
 
-  let valid = true
-
-  if (!ip)                   { ipErr.textContent      = 'Введи IP адрес';        valid = false }
-  else if (!isValidIP(ip))   { ipErr.textContent      = 'Неверный формат IP';    valid = false }
-  if (!login)                { loginErr.textContent   = 'Введи логин';           valid = false }
-  if (!pass)                 { passErr.textContent    = 'Введи пароль';          valid = false }
-  if (!isValidPort(port))    { portErr.textContent    = 'Порт от 1 до 65535';    valid = false }
-  if (!isValidPort(sshPort)) { sshPortErr.textContent = 'Порт от 1 до 65535';    valid = false }
-
-  if (!valid) return
+  if (!ip || !login || !pass) return
 
   btnSetup.disabled = true
-  btnSetup.classList.add('loading')
   setStatus('Подключаюсь...', 'pending')
 
-  window.api.setup({ ip, login, password: pass, port, sshPort })
-})
-
-btnReset.addEventListener('click', () => {
-  ipInput.value      = ''
-  loginInput.value   = ''
-  passInput.value    = ''
-  portInput.value    = '1080'
-  sshPortInput.value = '22'
-  logEl.textContent  = ''
-  progressEl.value   = 0
-  clearErrors()
-  setStatus('', '')
-  btnSetup.disabled = false
-  btnSetup.classList.remove('loading')
-  btnSetup.textContent = 'Настроить'
-})
+  window.api.setup({ ip, login, password: pass })
+}
