@@ -8,6 +8,7 @@ function createWindow() {
   win = new BrowserWindow({
     width: 900,
     height: 700,
+    icon: path.join(__dirname, 'build/icon.png'),
     autoHideMenuBar: true,
     title: 'Proxy Manager',
     webPreferences: {
