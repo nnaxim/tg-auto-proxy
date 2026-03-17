@@ -1,93 +1,138 @@
 # Proxy Setup
 
-Electron app that automatically sets up a SOCKS5 proxy on your VPS server via SSH.
+Небольшое десктопное приложение, которое автоматически поднимает и настраивает прокси на вашем VPS.
 
-## Download
+---
 
-Go to [Releases](https://github.com/nnaxim/tg-auto-proxy/releases) and download for your platform:
+## Что делает приложение
 
-| Platform | File |
+- Устанавливает и настраивает **SOCKS5 (Dante)** с логином и паролем
+- Поднимает **MTProto прокси (Telegram)** через Docker
+- Настраивает **Fail2Ban** (защита от брутфорса)
+- Генерирует пользователя и пароль
+- Сохраняет серверы прямо в приложении
+
+---
+
+## 📦 Скачать
+
+Сборки лежат тут:
+https://github.com/nnaxim/tg-auto-proxy/releases
+
+| Платформа | Файл |
 |----------|------|
-| Windows  | `Proxy Setup Setup 1.0.0.exe` |
-| Linux    | `Proxy Setup-1.0.0.AppImage` |
-| macOS    | `Proxy Setup-1.0.0.dmg` |
+| Windows  | `.exe` |
+| Linux    | `.AppImage` |
+| macOS    | `.dmg` |
 
-## How it works
+---
 
-1. Buy any VPS with Ubuntu or Debian
-2. Open the app
-3. Enter your server IP, login, password and ports
-4. Click **Setup**
-5. The app connects via SSH and automatically installs and configures Dante SOCKS5 proxy
-6. Configure Telegram with the provided credentials
+## Скриншоты
 
-## Configure Telegram
+![App](assets/github-screens/screen1.png)
 
-After setup is complete:
+![App2](assets/github-screens/screen2.png)
+
+---
+
+## Как пользоваться
+
+1. Покупаешь VPS (Ubuntu / Debian)
+2. Открываешь приложение
+3. Вводишь:
+   - IP
+   - SSH логин
+   - пароль
+4. Жмёшь **Настроить**
+5. Ждёшь пару секунд
+
+После этого у тебя:
+
+- SOCKS5 прокси
+- MTProto ссылка
+- сервер сохранён в списке
+
+---
+
+## Требования
+
+- Ubuntu 20.04+ / Debian
+- Root доступ по SSH
+- Открытый порт 1080
+
+---
+
+## Важно
+
+- Если `proxyuser` уже существует - пароль **не меняется**
+- Если MTProto уже запущен - контейнер не пересоздаётся
+
+---
+
+## Безопасность
+
+- Fail2Ban автоматически включается
+- Блокирует брутфорс SSH и SOCKS5
+- Конфиг создаётся, если его нет
+
+---
+
+## Где тестировалось
+
+Тестировалось на обычном VPS отсюда:
+https://4vps.su
+
+Это **не реклама**, просто там проверял работоспособность
+
+---
+
+## Где хранятся серверы
+
+Серверы сохраняются временно в:
+
 ```
-Settings - Advanced - Connection type - Use custom proxy - SOCKS5
-Host: your VPS IP
-Port: 1080
+localStorage
 ```
+---
 
-## Requirements
+## Сборка из исходников
 
-- VPS running Ubuntu 20.04+ or Debian 10+
-- Root SSH access
-- Open port for SOCKS5 (default 1080)
-
-## Build from source
 ```bash
 git clone https://github.com/nnaxim/tg-auto-proxy.git
 cd tg-auto-proxy
 npm install
 npm start
+```
+
+Сборка:
+
+```bash
+npm run build
 ```
 
 ---
 
-# Proxy Setup (RU)
 
-Electron приложение для автоматической настройки SOCKS5 прокси на вашем VPS сервере через SSH.
+## Планы
 
-## Скачать
+- Проверка статуса сервера
+- Пинг
+- Перезапуск сервера
+- Несколько пользователей
+- Нормальное хранилище вместо localStorage
 
-Перейди в [Releases](https://github.com/nnaxim/tg-auto-proxy/releases) и скачай файл для своей платформы:
+---
 
-| Платформа | Файл |
-|-----------|------|
-| Windows   | `Proxy Setup Setup 1.0.0.exe` |
-| Linux     | `Proxy Setup-1.0.0.AppImage` |
-| macOS     | `Proxy Setup-1.0.0.dmg` |
+## Лицензия
 
-## Как работает
+MIT
 
-1. Купи любой VPS с Ubuntu или Debian
-2. Открой приложение
-3. Введи IP сервера, логин, пароль и порты
-4. Нажми **Настроить**
-5. Приложение подключается по SSH и автоматически устанавливает и настраивает Dante SOCKS5 прокси
-6. Настрой Telegram с полученными данными
+---
 
-## Настройка Telegram
+## Зачем это вообще
 
-После завершения установки:
-```
-Settings - Advanced - Connection type - Use custom proxy - SOCKS5
-Host: IP вашего VPS
-Port: 1080
-```
+Сделано в первую очередь как инструмент для себя:
 
-## Требования
-
-- VPS с Ubuntu 20.04+ или Debian 10+
-- Root доступ по SSH
-- Открытый порт для SOCKS5 (по умолчанию 1080)
-
-## Сборка из исходников
-```bash
-git clone https://github.com/nnaxim/tg-auto-proxy.git
-cd tg-auto-proxy
-npm install
-npm start
-```
+- быстро поднять прокси
+- не возиться с конфигами
+- не вспоминать команды каждый раз
