@@ -84,9 +84,7 @@ body {
 .page.active {
   display: flex;
   flex-direction: column;
-  gap: 18px;
-  max-width: 600px;
-  margin: 0 auto;
+  height: 100%;
 }
 
 .card {
@@ -101,13 +99,53 @@ body {
 }
 
 .connect-card {
-  min-height: calc(100vh - 56px);
+  flex: 1;
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.connect-top {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.connect-bottom {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.divider {
+  height: 1px;
+  background: rgba(60, 70, 140, 0.3);
+}
+
+.status-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  color: #9aa3c7;
+}
+
+#log {
+  font-size: 12px;
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  color: #7a85b8;
+  line-height: 1.8;
+  white-space: pre-wrap;
+  word-break: break-all;
+  overflow-y: auto;
+  flex: 1;
+  min-height: 60px;
+  max-height: 200px;
 }
 
 .connect-card h2 {
-  margin-bottom: 28px;
+  margin-bottom: 20px;
 }
 
 .connect-card .form {
@@ -374,3 +412,222 @@ progress::-webkit-progress-value {
   margin-top: 40px;
   font-size: 14px;
 }
+
+.empty-state {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 60px 20px;
+  opacity: 0.5;
+}
+.empty-icon { font-size: 40px; margin-bottom: 12px; }
+.empty-title { font-size: 16px; font-weight: 600; margin-bottom: 6px; }
+.empty-sub { font-size: 13px; color: #7a85b8; }
+
+.server-card {
+  padding: 20px;
+  border-radius: 16px;
+  background: linear-gradient(145deg, rgba(25,30,60,0.8), rgba(15,18,35,0.95));
+  border: 1px solid rgba(60,70,140,0.25);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.sc-header { display: flex; flex-direction: column; gap: 4px; }
+
+.sc-ip-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.sc-flag { font-size: 22px; }
+
+.sc-ip {
+  font-size: 15px;
+  font-weight: 700;
+  color: #e6e9ff;
+  flex: 1;
+}
+
+.sc-badge {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 20px;
+}
+.sc-badge.loading { background: rgba(255,212,60,0.1); color: #ffd43c; border: 1px solid rgba(255,212,60,0.3); }
+.sc-badge.online  { background: rgba(60,255,143,0.1); color: #3cff8f; border: 1px solid rgba(60,255,143,0.3); }
+.sc-badge.offline { background: rgba(255,77,77,0.1);  color: #ff4d4d; border: 1px solid rgba(255,77,77,0.3); }
+
+.sc-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  display: inline-block;
+}
+
+.sc-country {
+  font-size: 12px; color: #5a6499;
+}
+
+.sc-block {
+  background: rgba(10,13,35,0.6);
+  border: 1px solid #1c2450;
+  border-radius: 10px;
+  padding: 10px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.sc-block-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.sc-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  color: #5a6499;
+}
+
+.sc-block-actions { display: flex; gap: 6px; }
+
+.sc-btn-copy, .sc-btn-tg {
+  font-size: 11px;
+  padding: 3px 8px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-weight: 500;
+  transition: 0.15s;
+}
+.sc-btn-copy {
+  background: rgba(43,92,255,0.15);
+  border: 1px solid rgba(43,92,255,0.3);
+  color: #7a9fff;
+}
+.sc-btn-copy:hover { background: rgba(43,92,255,0.3); color: #fff; }
+
+.sc-btn-tg {
+  background: rgba(40,160,240,0.15);
+  border: 1px solid rgba(40,160,240,0.3);
+  color: #5bc8ff;
+}
+.sc-btn-tg:hover { background: rgba(40,160,240,0.3); color: #fff; }
+
+.sc-value {
+  font-size: 12px;
+  color: #c0caff;
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  word-break: break-all;
+}
+.sc-value.small {
+  font-size: 11px; opacity: 0.7;
+}
+
+.sc-footer {
+  display: flex;
+  gap: 8px;
+  margin-top: 4px;
+  align-items: center;
+}
+
+.sc-btn-socks, .sc-btn-mt {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 12px;
+  border-radius: 8px;
+  border: none;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: 0.15s;
+  flex: 1;
+  justify-content: center;
+}
+
+.sc-btn-socks {
+  background: rgba(43,92,255,0.15);
+  border: 1px solid rgba(43,92,255,0.3);
+  color: #7a9fff;
+}
+.sc-btn-socks:hover { background: rgba(43,92,255,0.3); color: #fff; }
+
+.sc-btn-mt {
+  background: rgba(40,160,240,0.15);
+  border: 1px solid rgba(40,160,240,0.3);
+  color: #5bc8ff;
+}
+.sc-btn-mt:hover { background: rgba(40,160,240,0.3); color: #fff; }
+
+.sc-del {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  border: 1px solid rgba(255,77,77,0.3);
+  background: rgba(255,77,77,0.1);
+  color: #ff7a7a;
+  cursor: pointer;
+  transition: 0.15s;
+  flex-shrink: 0;
+}
+.sc-del:hover { background: rgba(255,77,77,0.25); color: #fff; }
+
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+.modal {
+  background: linear-gradient(145deg, rgba(25,30,60,0.98), rgba(15,18,35,0.99));
+  border: 1px solid rgba(60,70,140,0.4);
+  border-radius: 18px;
+  padding: 32px;
+  text-align: center;
+  width: 300px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+}
+.modal-icon { font-size: 36px; margin-bottom: 12px; }
+.modal-title { font-size: 17px; font-weight: 700; margin-bottom: 8px; }
+.modal-text { font-size: 13px; color: #7a85b8; margin-bottom: 24px; }
+.modal-actions { display: flex; gap: 10px; }
+.modal-btn {
+  flex: 1;
+  padding: 11px;
+  border-radius: 10px;
+  border: none;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.15s;
+}
+.modal-btn.cancel {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  color: #9aa3c7;
+}
+.modal-btn.cancel:hover { background: rgba(255,255,255,0.1); }
+.modal-btn.confirm {
+  background: linear-gradient(135deg, #ff4d4d, #cc2222);
+  color: white;
+}
+.modal-btn.confirm:hover { opacity: 0.85; }

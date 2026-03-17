@@ -6,19 +6,20 @@ let win
 
 function createWindow() {
   win = new BrowserWindow({
-    width: 900,
+    width: 700,
     height: 700,
-    icon: path.join(__dirname, 'build/icon.png'),
+    resizable: false,
+    icon: path.join(__dirname, '../build/icon.png'),
     autoHideMenuBar: true,
     title: 'Proxy Manager',
     webPreferences: {
-      preload: path.join(__dirname, 'preload.js'),
-      contextIsolation: true,
-      nodeIntegration: false,
+      preload: path.join(__dirname, '../preload/preload.js'),
+      contextIsolation: false,
+      nodeIntegration: true,
     },
   })
 
-  win.loadFile('index.html')
+  win.loadFile(path.join(__dirname, '../renderer/index.html'))
 }
 
 app.whenReady().then(createWindow)

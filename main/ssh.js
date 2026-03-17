@@ -30,33 +30,26 @@ export DEBIAN_FRONTEND=noninteractive
 echo "STEP: packages"
 apt-get update -y
 
-dpkg -s dante-server >/dev/null 2>&1 || apt-get install -y dante-server
-dpkg -s docker.io >/dev/null 2>&1 || apt-get install -y docker.io
-dpkg -s fail2ban >/dev/null 2>&1 || apt-get install -y fail2ban
+apt-get install -y dante-server docker.io fail2ban curl
 
 echo "STEP: docker"
 
-dpkg -s docker.io >/dev/null 2>&1 || apt-get install -y docker.io
-
 systemctl daemon-reexec
-systemctl enable docker || true
-systemctl start docker || true
+systemctl enable docker
+systemctl restart docker
 
 sleep 3
 
 if ! systemctl is-active --quiet docker; then
-  echo "FIX: docker not running, trying repair"
-
+  echo "FIX: reinstall docker"
   apt-get install -y --reinstall docker.io containerd
-
   systemctl daemon-reexec
-  systemctl restart docker || true
-
+  systemctl restart docker
   sleep 3
 fi
 
 if ! systemctl is-active --quiet docker; then
-  echo "ERROR: docker failed to start"
+  echo "ERROR: docker failed"
 else
   echo "OK: docker running"
 fi
@@ -87,31 +80,38 @@ client pass { from: 0.0.0.0/0 to: 0.0.0.0/0 }
 pass { from: 0.0.0.0/0 to: 0.0.0.0/0 }
 EOF
 
-systemctl restart danted
 systemctl enable danted
+systemctl restart danted
 
 echo "STEP: mtproto"
 
-if docker ps -a | grep -q mtproto; then
-  SECRET="EXISTS"
+# убиваем всё что может мешать
+docker rm -f mtproto 2>/dev/null || true
+
+# освобождаем порт если вдруг занят
+fuser -k 443/tcp 2>/dev/null || true
+
+# правильный secret (32 hex символа)
+SECRET=$(head -c 16 /dev/urandom | xxd -ps)
+
+docker run -d -p 443:443 --name mtproto \\
+  --restart always \\
+  -e SECRET=$SECRET \\
+  telegrammessenger/proxy
+
+sleep 3
+
+if ! docker ps | grep -q mtproto; then
+  echo "ERROR: mtproto failed"
+  docker logs mtproto || true
 else
-  SECRET=$(head -c 16 /dev/urandom | xxd -ps)
-
-  docker rm -f mtproto 2>/dev/null || true
-
-  docker run -d -p 443:443 --name mtproto \\
-    -e SECRET=$SECRET telegrammessenger/proxy || true
+  echo "OK: mtproto running"
 fi
 
-if [ "$SECRET" = "EXISTS" ]; then
-  LINK="ALREADY_RUNNING"
-else
-  LINK="tg://proxy?server=${ip}&port=443&secret=$SECRET"
-fi
+LINK="tg://proxy?server=${ip}&port=443&secret=$SECRET"
 
 echo "STEP: fail2ban"
 
-if [ ! -f /etc/fail2ban/jail.local ]; then
 cat > /etc/fail2ban/jail.local <<EOF
 [DEFAULT]
 banaction = iptables-multiport
@@ -126,17 +126,15 @@ filter = danted
 logpath = /var/log/syslog
 maxretry = 5
 EOF
-fi
 
-if [ ! -f /etc/fail2ban/filter.d/danted.conf ]; then
 cat > /etc/fail2ban/filter.d/danted.conf <<EOF
 [Definition]
 failregex = ^.{0,60}danted\\[\\d+\\]: info: block\\(1\\): tcp/accept .* <HOST>.*\$
 ignoreregex =
 EOF
-fi
 
-systemctl restart fail2ban || true
+systemctl enable fail2ban
+systemctl restart fail2ban
 
 echo "STEP: done"
 

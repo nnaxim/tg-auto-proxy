@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>Proxy Manager</title>
+  <link rel="stylesheet" href="./styles/style.css" />
+</head>
+<body>
+
+<div class="app">
+
+  <div class="sidebar">
+    <div class="logo">Proxy</div>
+
+    <button class="nav active" data-page="setup">
+      <img src="../assets/icons/icon-setup.svg" width="16" height="16" />
+      Setup
+    </button>
+
+    <button class="nav" data-page="servers">
+      <img src="../assets/icons/icon-servers.svg" width="16" height="16" />
+      Мои серверы
+    </button>
+  </div>
+
+  <div class="content" id="content"></div>
+</div>
+
+<script src="renderer.js"></script>
+</body>
+</html>
