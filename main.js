@@ -6,7 +6,7 @@ let win
 
 function createWindow() {
   win = new BrowserWindow({
-    width: 480,
+    width: 680,
     height: 620,
     resizable: false,
     autoHideMenuBar: true,

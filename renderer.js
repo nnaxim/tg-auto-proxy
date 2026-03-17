@@ -1,3 +1,13 @@
+document.querySelectorAll('.nav').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.nav').forEach(b => b.classList.remove('active'))
+    btn.classList.add('active')
+
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'))
+    document.getElementById(btn.dataset.page).classList.add('active')
+  })
+})
+
 const ipInput      = document.getElementById('ip')
 const loginInput   = document.getElementById('login')
 const passInput    = document.getElementById('pass')
