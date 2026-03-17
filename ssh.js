@@ -36,14 +36,29 @@ dpkg -s fail2ban >/dev/null 2>&1 || apt-get install -y fail2ban
 
 echo "STEP: docker"
 
-systemctl enable docker 2>/dev/null || true
-systemctl start docker 2>/dev/null || true
-sleep 2
+dpkg -s docker.io >/dev/null 2>&1 || apt-get install -y docker.io
+
+systemctl daemon-reexec
+systemctl enable docker || true
+systemctl start docker || true
+
+sleep 3
 
 if ! systemctl is-active --quiet docker; then
-  echo "FIX: docker failed, retry"
+  echo "FIX: docker not running, trying repair"
+
+  apt-get install -y --reinstall docker.io containerd
+
+  systemctl daemon-reexec
   systemctl restart docker || true
-  sleep 2
+
+  sleep 3
+fi
+
+if ! systemctl is-active --quiet docker; then
+  echo "ERROR: docker failed to start"
+else
+  echo "OK: docker running"
 fi
 
 echo "STEP: user"
