@@ -14,7 +14,7 @@
 
 ---
 
-## 📦 Скачать
+## Скачать
 
 Сборки лежат тут:
 https://github.com/nnaxim/tg-auto-proxy/releases
@@ -123,11 +123,6 @@ npm run build
 
 ---
 
-## Лицензия
-
-MIT
-
----
 
 ## Зачем это вообще
 
